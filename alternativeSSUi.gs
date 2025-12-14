@@ -242,6 +242,7 @@ SpreadsheetApp.getUi = function(){
     },
     hold(parameter = 'eAlert'){
       let e    = null;
+      PropertiesService.getScriptProperties().deleteProperty('ping')
       while(!e){
 
         const ping  = PropertiesService.getScriptProperties().getProperty('ping')
