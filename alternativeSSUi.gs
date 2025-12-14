@@ -223,9 +223,12 @@ SpreadsheetApp.getUi = function(){
                 }
             });
 
-            setInterval(function(){
+            function ping(){
               google.script.run.ping()
-            },5000)
+            }
+
+            setInterval(ping,5000)
+            ping()
 
         </script>
     </body>
