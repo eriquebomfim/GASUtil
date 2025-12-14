@@ -1,9 +1,9 @@
 /**
  * ALTERNATIVE SSUI (SpreadSheetApp.getUI)
  * 
- * This is a workaround to save your application after Google changes
- * the way we used .alert() and .prompt() from SpreadSheetsApp.getUI on Dec. 15 2025.
- * by adding this file to your application, you'll override SpresheetsApp.getUI methods
+ * This is a workaroud to save your application after Google change
+ * the way we used alert and prompts from SpreadSheetsApp.getUI on Dec. 15 2025.
+ * by adding this file to your application, you override SpresheetsApp.getUI methods
  * alert and prompt, and getting hid of that annoying black toast "Working..."
  * 
  *
@@ -240,9 +240,17 @@ SpreadsheetApp.getUi = function(){
       }
       return this
     },
+    release(){
+      const SP = PropertiesService.getScriptProperties()
+      SP.deleteProperty('ping')
+      SP.deleteProperty('eAlert')
+      SP.deleteProperty('ePrompt')
+    },
     hold(parameter = 'eAlert'){
+      
       let e    = null;
       PropertiesService.getScriptProperties().deleteProperty('ping')
+
       while(!e){
 
         const ping  = PropertiesService.getScriptProperties().getProperty('ping')
@@ -255,10 +263,10 @@ SpreadsheetApp.getUi = function(){
         e = PropertiesService.getScriptProperties().getProperty(parameter)
         Utilities.sleep(500)
       }
+      this.release();
       return e
     },
     prompt(){
-      PropertiesService.getScriptProperties().deleteProperty('ePrompt')
       this.getInterface('prompt',...arguments).render()
       const result = this.hold('ePrompt') || ''
       return {
@@ -269,7 +277,6 @@ SpreadsheetApp.getUi = function(){
       }
     },
     alert(){
-      PropertiesService.getScriptProperties().deleteProperty('eAlert')
       this.getInterface(undefined,...arguments).render()
       return this.hold()
     }
