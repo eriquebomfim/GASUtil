@@ -1,9 +1,9 @@
 /**
  * ALTERNATIVE SSUI (SpreadSheetApp.getUI)
  * 
- * This is a workaroud to save your application after Google change
- * the way we used alert and prompts from SpreadSheetsApp.getUI on Dec. 15 2025.
- * by adding this file to your application, you override SpresheetsApp.getUI methods
+ * This is a workaround to save your application after Google changes
+ * the way we used .alert() and .prompt() from SpreadSheetsApp.getUI on Dec. 15 2025.
+ * by adding this file to your application, you'll override SpresheetsApp.getUI methods
  * alert and prompt, and getting hid of that annoying black toast "Working..."
  * 
  *
