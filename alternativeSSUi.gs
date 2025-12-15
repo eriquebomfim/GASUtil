@@ -17,40 +17,71 @@
  * version 1.0.0
  */
 
-const ui      = SpreadsheetApp.getUi;
+const _ui      = SpreadsheetApp.getUi;
 const giveup  = 7;
 
 SpreadsheetApp.getUi = function(){
 
-  const UI = ui();
+  const _UI = _ui();
   
   return {
-    ...UI,
+    ..._UI,
     getInterface(){
 
-    const args = arguments;
+    let type      = 'alert'
+    let buttonSet = 'OK'
+    let body      = null
+    let title     = ''
+    let isPrompt  = false
+
+    const args    = arguments;
 
     switch(true) {
       case args.length == 2 && !args[0]:
-        var type = 'alert'
-        var body = args[1]
+        type = 'alert'
+        body = args[1]
       break;
       case args.length == 3 && !args[0]:
-        var type  = 'alert'
-        var title = args[1]  
-        var body = args[2]
+        type      = 'alert'  
+        body      = args[1]
+        buttonSet = args[2]
       break;
       case args.length == 4 && !args[0]:
-        var type  = 'alert'
-        var title = args[1]  
-        var body  = args[2]
+        type      = 'alert'
+        title     = args[1]  
+        body      = args[2]
+        buttonSet = args[3]
       break;      
       case args.length == 2 && args[0] == 'prompt':
-        var type = args[0]
-        var body = args[1]
+        type = args[0]
+        body = args[1]
+        buttonSet = 'OK_CANCEL'
+        isPrompt = true
       break;      
       default:
     }
+
+    const buttons = {
+      YES:    { type: 'primary' },
+      OK:     { type: 'primary' },
+      NO:     { type: 'cancel' },
+      CANCEL: { type: 'cancel' }
+    };
+
+    const buttonsTemplate = buttonSet
+                            .toString()
+                            .split('_')
+                            .reduce((rdx,btn)=>{
+                              let btnProps = buttons[btn];
+                              rdx += `                                              
+                                <button type="button" 
+                                class="btn btn-${btnProps.type}" 
+                                onclick="${ !isPrompt ? `handleClose('${btn}')` : `handlePrompt()`}">
+                                ${btn}
+                                </button>`                                
+                              return rdx;                          
+                            },``)
+
 
     const html = `
     <!DOCTYPE html>
@@ -168,35 +199,11 @@ SpreadsheetApp.getUi = function(){
         </div>
         
         <div class="dialog-footer">
-              <button type="button" 
-                      class="btn btn-cancel" 
-                      onclick="handleClose(false)">
-                  Cancel
-              </button>
-            ${/alert/i.test(type) ? `
-                <button type="button" 
-                        class="btn btn-primary" 
-                        onclick="handleClose(true)">
-                    OK
-                </button>
-            ` : `          
-                <button type="button" 
-                        class="btn btn-primary" 
-                        onclick="handlePrompt()">
-                    OK
-                </button>
-            `}
+         ${ buttonsTemplate }
         </div>
         
         <script>
             function handleClose(result = true) {
-               ${ type == 'prompt' 
-               ? `
-                handlePrompt();
-                return true
-               ` 
-               :'' 
-               }
                 google.script.run.withSuccessHandler(function() {
                     google.script.host.close();
                 }).eAlert(result);
@@ -278,7 +285,22 @@ SpreadsheetApp.getUi = function(){
     },
     alert(){
       this.getInterface(undefined,...arguments).render()
-      return this.hold()
+      let response = this.hold()
+      switch(true){
+        case /cancel/i.test(response):
+          return _UI.Button.CANCEL
+        break;
+        case /no/i.test(response):
+          return _UI.Button.NO
+        break;
+        case /ok/i.test(response):
+          return _UI.Button.OK   
+        break;
+        case /yes/i.test(response):
+          return _UI.Button.YES
+        break;
+        default:
+      }
     }
   }
 }
