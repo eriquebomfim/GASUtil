@@ -12,9 +12,13 @@
  * SpreadsheetApp.getUi().prompt('This is a prompt');
  * 
  * To use this, copy and paste this code to your project.
- * 
+ *
+ * Note: If you are using .alert or .prompt within the onOpen event, you will need to move this logic
+ * to a trigger. From the trigger, execute your target function to ensure proper functionality.
+ *
  * @author Erique Bomfim
  * version 1.0.0
+ *
  */
 
 const _ui      = SpreadsheetApp.getUi;
