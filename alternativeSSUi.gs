@@ -18,6 +18,9 @@
  *
  * @author Erique Bomfim
  * version 1.0.0
+ * 
+ * If you find this helpful, consider supporting me with a coffee! :D
+ * Bitcoin Address: bc1qk3pgghykjfp9qjkta76z4va5pdvkqdr5jfrf3r
  *
  */
 
